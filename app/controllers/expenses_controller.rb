@@ -1,5 +1,6 @@
 class ExpensesController < ApplicationController
   before_action :set_expense, only: %i[ show edit update destroy ]
+  before_action :set_categories, only: %i[ new edit create update ]
 
   # GET /expenses or /expenses.json
   def index
@@ -7,13 +8,13 @@ class ExpensesController < ApplicationController
       @expenses = Expense.where(category_id: params[:category_id])
     else
       @expenses = Expense.includes(:category).all
-      respond_to do |format|
-        format.html
-        format.json { render json: @expenses.as_json(
-          include: { category: { only: :nom } }, 
-          except: :category_id 
-        )}
-      end
+    end
+    respond_to do |format|
+      format.html
+      format.json { render json: @expenses.as_json(
+        include: { category: { only: :nom } }, 
+        except: :category_id 
+      )}
     end
   end
 
@@ -66,6 +67,10 @@ class ExpensesController < ApplicationController
       format.html { redirect_to expenses_path, notice: "Expense was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
     end
+  end
+
+  def set_categories
+    @categories = Category.all
   end
 
   private

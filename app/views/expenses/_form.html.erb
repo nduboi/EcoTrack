@@ -28,9 +28,8 @@
 
   <div>
     <%= form.label :category_id, style: "display: block" %>
-    <%= form.text_field :category_id %>
+    <%= form.select :category_id, @categories.collect { |c| [c.nom, c.id] }, {}, { style: "display: block" } %>
   </div>
-
   <div>
     <%= form.submit %>
   </div>
