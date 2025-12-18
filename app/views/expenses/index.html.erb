@@ -1,0 +1,27 @@
+<%= form_with url: expenses_path, method: :get do |form| %>
+  <div>
+    <%= form.label :category_id, "Filtrer par catégorie :" %>
+    <%= form.collection_select :category_id, Category.all, :id, :nom, include_blank: "Toutes les catégories" %>
+    <%= form.submit "Filtrer" %>
+  </div>
+<% end %>
+
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Dépenses" %>
+
+<h1>Dépenses</h1>
+
+<div id="expenses">
+  <h1>Liste des dépenses</h1>
+  <% @expenses.each do |expense| %>
+    <%= render expense %>
+    <p>
+      <%= link_to "Show this expense", expense %>
+    </p>
+  <% end %>
+</div>
+<%= link_to "Nouvelle dépense", new_expense_path %>
+
+<h1>Somme toutes les dépenses: <%= @expenses.sum(:montant) %> </h1>
+
