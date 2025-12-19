@@ -3,69 +3,72 @@
   <head>
     <title><%= content_for(:title) || "Mon Journal" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Mon Journal">
-    <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <main class="">
+    <% if flash.any? %>
+      <div class="fixed top-4 right-4 z-[100] flex flex-col gap-2 w-full max-w-sm">
+        <% flash.each do |type, message| %>
+          <% alert_class = (type == 'alert' ? 'alert-error' : 'alert-success') %>
+          <div class="alert <%= alert_class %> shadow-lg border-none animate-in fade-in slide-in-from-top-4 duration-300">
+            <%= lucide_icon(type == 'alert' ? "alert-circle" : "check-circle", class: "size-5") %>
+            <span class="text-sm font-medium"><%= message %></span>
+            <button class="btn btn-ghost btn-xs btn-circle" onclick="this.parentElement.remove()">✕</button>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <main>
       <div class="drawer">
         <input id="my-drawer-1" type="checkbox" class="drawer-toggle" />
+        
         <div class="drawer-content flex flex-col bg-base-100 min-h-screen">
-      
-        <header class="navbar bg-base-100 border-b border-base-200 px-4 h-16 sticky top-0 z-10">
-          <div class="flex-none">
-            <label for="my-drawer-1" class="btn btn-ghost btn-square">
-              <%= lucide_icon("menu", class: "size-5") %>
-            </label>
-          </div>
-          
-          <div class="flex-1 px-2">
-            <h1 class="text-sm font-semibold text-base-content/60 uppercase tracking-wider">
-              <%= content_for(:title) || "Tableau de bord" %>
-            </h1>
-          </div>
+          <header class="navbar bg-base-100 border-b border-base-200 px-4 h-16 sticky top-0 z-10">
+            <% if user_signed_in? %>
+              <div class="flex-none">
+                <label for="my-drawer-1" class="btn btn-ghost btn-square">
+                  <%= lucide_icon("menu", class: "size-5") %>
+                </label>
+              </div>
+            <% end %>
+            
+            <div class="flex-1 px-2">
+              <h1 class="text-sm font-semibold text-base-content/60 uppercase tracking-wider">
+                <%= user_signed_in? ? (content_for(:title) || "Tableau de bord") : "Eco Track" %>
+              </h1>
+            </div>
 
-          <% if current_user %>
-            <div class="flex gap-4">
-              <button class="btn btn-ghost btn-circle btn-sm">
-                <%= lucide_icon("bell", class: "size-5") %>
-              </button>
-              <div class="avatar size-7">
-                <div class="rounded-full items-center justify-center flex bg-base-200">
-                    <% if current_user.avatar %>
-                      <img src="<%= current_user.avatar %>" alt="avatar" />
+            <% if user_signed_in? %>
+              <div class="flex gap-4 items-center">
+                <button class="btn btn-ghost btn-circle btn-sm">
+                  <%= lucide_icon("bell", class: "size-5") %>
+                </button>
+                <div class="avatar online shadow-sm">
+                  <div class="w-9 rounded-full bg-base-200 flex items-center justify-center">
+                    <% if current_user.avatar.present? %>
+                      <img src="<%= current_user.avatar %>" />
                     <% else %>
-                      <%= lucide_icon("user", class: "size-5 text-black") %>
+                      <%= lucide_icon("user", class: "size-5") %>
                     <% end %>
+                  </div>
                 </div>
               </div>
-            </div>
-          <% end %>
-        </header>
+            <% end %>
+          </header>
 
-        <div class="p-6 lg:p-10">
-          <%= yield %>
+          <div class="p-6 lg:p-10 grow">
+            <%= yield %>
+          </div>
         </div>
-        
-      </div>
-        <%= render "layouts/sidebar" %>
+
+        <% if user_signed_in? %>
+          <%= render "layouts/sidebar" %>
+        <% end %>
       </div>
     </main>
   </body>

@@ -6,8 +6,11 @@
         <h2 class="card-title text-2xl font-bold">Connexion</h2>
       </div>
 
-      <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-4" }) do |f| %>
-        
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name), 
+          html: { 
+            class: "space-y-4",
+            data: { turbo: false } # Force le rechargement classique pour le login
+          }) do |f| %>        
         <div class="form-control">
           <label class="label">
             <span class="label-text font-semibold text-base-content/70">Email</span>

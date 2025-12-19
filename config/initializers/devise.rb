@@ -6,4 +6,14 @@ Devise.setup do |config|
         image_aspect_ratio: 'square',
         image_size: 50
     }
+    config.navigational_formats = ['*/*', :html, :turbo_stream]
+end
+
+Rails.application.config.after_initialize do
+  Devise.setup do |config|
+    config.parent_controller = 'ApplicationController'
+    config.warden do |manager|
+      manager.failure_app = DeviseFailureApp
+    end
+  end
 end
