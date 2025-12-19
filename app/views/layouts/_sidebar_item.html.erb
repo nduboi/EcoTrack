@@ -1,0 +1,23 @@
+<% is_active = current_page?(path) %>
+
+<li class="w-full relative group">
+  <%= link_to path, 
+      class: "flex items-center gap-4 w-full p-3 rounded-lg transition-all
+              #{is_active ? 'bg-base-300/50' : 'hover:bg-base-300'} 
+              is-drawer-close:justify-center is-drawer-close:tooltip is-drawer-close:tooltip-right", 
+      data: { tip: title } do %>
+    
+    <%# La petite barre bleue (l'indicateur) %>
+    <div class="absolute left-0 w-1 bg-primary rounded-r-full transition-all duration-300
+                <%= is_active ? 'h-6 opacity-100' : 'h-0 opacity-0 group-hover:h-4 group-hover:opacity-50' %>">
+    </div>
+
+    <%# L'icône (un peu plus sombre si actif) %>
+    <%= lucide_icon(icon, class: "size-5 shrink-0 #{is_active ? 'text-primary' : 'text-base-content/70'}") %>
+    
+    <%# Le texte %>
+    <span class="is-drawer-close:hidden text-left grow font-medium text-sm <%= is_active ? 'text-base-content' : 'text-base-content/70' %>">
+      <%= title %>
+    </span>
+  <% end %>
+</li>

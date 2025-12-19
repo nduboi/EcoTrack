@@ -66,3 +66,13 @@ group :test do
 end
 
 gem "tailwindcss-rails", "~> 4.4"
+
+gem "lucide-rails", "~> 0.7.1"
+
+gem "devise", "~> 4.9"
+
+gem 'omniauth-github'
+gem 'omniauth-google-oauth2'
+gem "omniauth-rails_csrf_protection"
+gem 'dotenv-rails'
+gem "view_component"

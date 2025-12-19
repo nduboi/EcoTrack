@@ -1,0 +1,19 @@
+<% if @provider == "google" %>
+<div class="form-control mt-2">
+  <%= button_to user_google_oauth2_omniauth_authorize_path, 
+      data: { turbo: false }, 
+      class: "btn btn-outline w-full gap-3 bg-white text-gray-700 hover:bg-gray-50 border-gray-300" do %>
+    <img src="https://authjs.dev/img/providers/google.svg" class="w-5 h-5" alt="Google Logo">
+    Continuer avec Google
+  <% end %>
+</div>
+<% else %>
+<div class="form-control mt-2">
+  <%= button_to user_github_omniauth_authorize_path, 
+      data: { turbo: false }, 
+      class: "btn btn-outline w-full gap-3 bg-black text-white hover:bg-gray-900 border-black" do %>
+    <%= helpers.lucide_icon("github", class: "w-5 h-5") %>
+    Continuer avec GitHub
+  <% end %>
+</div>
+<% end %>

@@ -24,8 +24,49 @@
   </head>
 
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
-      <%= yield %>
+    <main class="">
+      <div class="drawer">
+        <input id="my-drawer-1" type="checkbox" class="drawer-toggle" />
+        <div class="drawer-content flex flex-col bg-base-100 min-h-screen">
+      
+        <header class="navbar bg-base-100 border-b border-base-200 px-4 h-16 sticky top-0 z-10">
+          <div class="flex-none">
+            <label for="my-drawer-1" class="btn btn-ghost btn-square">
+              <%= lucide_icon("menu", class: "size-5") %>
+            </label>
+          </div>
+          
+          <div class="flex-1 px-2">
+            <h1 class="text-sm font-semibold text-base-content/60 uppercase tracking-wider">
+              <%= content_for(:title) || "Tableau de bord" %>
+            </h1>
+          </div>
+
+          <% if current_user %>
+            <div class="flex gap-4">
+              <button class="btn btn-ghost btn-circle btn-sm">
+                <%= lucide_icon("bell", class: "size-5") %>
+              </button>
+              <div class="avatar size-7">
+                <div class="rounded-full items-center justify-center flex bg-base-200">
+                    <% if current_user.avatar %>
+                      <img src="<%= current_user.avatar %>" alt="avatar" />
+                    <% else %>
+                      <%= lucide_icon("user", class: "size-5 text-black") %>
+                    <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </header>
+
+        <div class="p-6 lg:p-10">
+          <%= yield %>
+        </div>
+        
+      </div>
+        <%= render "layouts/sidebar" %>
+      </div>
     </main>
   </body>
 </html>

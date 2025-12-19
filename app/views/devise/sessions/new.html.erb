@@ -1,0 +1,68 @@
+<div class="min-h-[80vh] flex items-center justify-center">
+  <div class="card w-full max-w-md bg-base-100 shadow-xl border border-base-200">
+    <div class="card-body">
+      <%# Logo ou Titre %>
+      <div class="flex flex-col items-center gap-2 mb-6">
+        <h2 class="card-title text-2xl font-bold">Connexion</h2>
+      </div>
+
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-4" }) do |f| %>
+        
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold text-base-content/70">Email</span>
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/40">
+              <%= lucide_icon("mail", class: "size-5") %>
+            </div>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", 
+                placeholder: "nom@exemple.com",
+                class: "input input-bordered w-full pl-2 focus:input-primary" %>
+          </div>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold text-base-content/70">Mot de passe</span>
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/40">
+              <%= lucide_icon("lock", class: "size-5") %>
+            </div>
+            <%= f.password_field :password, autocomplete: "current-password", 
+                placeholder: "••••••••",
+                class: "input input-bordered w-full pl-2 focus:input-primary" %>
+          </div>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <div class="form-control">
+            <label class="label cursor-pointer justify-start gap-3">
+              <%= f.check_box :remember_me, class: "checkbox checkbox-primary checkbox-sm" %>
+              <span class="label-text">Se souvenir de moi</span>
+            </label>
+          </div>
+        <% end %>
+
+        <div class="form-control mt-6">
+          <%= f.submit "Se connecter", class: "btn btn-primary w-full text-white" %>
+        </div>
+      <% end %>
+
+      <div class="divider text-xs text-base-content/40 uppercase"></div>
+      
+      <div class="text-center space-y-2">
+        <%= render "devise/shared/links" %>
+        <div class="flex flex-col gap-3 w-full text-center mt-4">
+          <div class="text-sm text-base-content/60">
+            Ou connectez-vous avec
+          </div>
+          <div class="flex flex-col gap-3 w-full">
+            <%= render(SocialButtonComponent.new(provider: "github", path: user_github_omniauth_authorize_path)) %>
+            <%= render(SocialButtonComponent.new(provider: "google", path: user_google_oauth2_omniauth_authorize_path)) %>
+        <div>
+      </div>
+    </div>
+  </div>
+</div>

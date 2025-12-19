@@ -1,0 +1,48 @@
+<div class="drawer-side is-drawer-close:overflow-visible">
+  <div class="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64 transition-all duration-300">
+    <ul class="menu w-full p-2 flex flex-col items-center gap-2 grow">
+      
+      <li class="w-full mb-4">
+        <div class="flex items-center justify-between w-full px-2 is-drawer-close:justify-center">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-primary text-primary-content rounded-xl shadow-lg ring-1 ring-primary/20">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-6 shrink-0">
+                <path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/>
+              </svg>
+            </div>
+            <span class="font-bold text-lg tracking-tight is-drawer-close:hidden">Eco Track</span>
+          </div>
+          <label for="my-drawer-1" class="btn btn-ghost btn-sm btn-square is-drawer-close:hidden hover:bg-base-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="m15 18-6-6 6-6"/></svg>
+          </label>
+        </div>
+      </li>
+
+      <div class="divider my-0 h-1 w-full"></div>
+      <%= render "layouts/sidebar_item", title: "Tableau de bord", icon: "home", path: root_path %>
+      <%= render "layouts/sidebar_item", title: "Catégories", icon: "chart-column-stacked", path: "/categories" %>
+      <%= render "layouts/sidebar_item", title: "Dépenses", icon: "banknote-arrow-down", path: "/expenses" %>
+      <%= render "layouts/sidebar_item", title: "Revenus", icon: "banknote-arrow-up", path: "/revenues" %>
+      <%= render "layouts/sidebar_item", title: "Comptes", icon: "landmark", path: "/bank" %>
+      <%= render "layouts/sidebar_item", title: "Portefeuille", icon: "wallet", path: "/wallet" %>
+      <div class="divider my-0 h-1 w-full mt-auto"></div>
+      <%= render "layouts/sidebar_item", title: "Settings", icon: "settings", path: "/settings" %>
+      <%= render "layouts/sidebar_item", title: "Account", icon: "user", path: "/#" %>
+      <li class="w-full">
+        <%= button_to destroy_user_session_path, 
+            method: :delete, 
+            form: { class: "contents" }, 
+            class: "flex items-center gap-4 w-full p-3 rounded-lg transition-all 
+                    text-base-content/70 hover:bg-error/10 hover:text-error 
+                    is-drawer-close:justify-center" do %>
+          
+          <%= lucide_icon("log-out", class: "size-5 shrink-0") %>
+          
+          <span class="is-drawer-close:hidden text-left grow font-medium text-sm">
+            Déconnexion
+          </span>
+        <% end %>
+      </li>
+    </ul>
+  </div>
+</div>
