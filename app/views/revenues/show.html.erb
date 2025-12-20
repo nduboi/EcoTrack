@@ -1,0 +1,33 @@
+<div class="max-w-2xl mx-auto space-y-6">
+  <div class="flex justify-between items-center">
+    <%= link_to revenues_path, class: "btn btn-ghost btn-sm gap-2" do %>
+      <%= lucide_icon("arrow-left") %> Retour
+    <% end %>
+    <div class="flex gap-2">
+      <%= link_to edit_revenue_path(@revenue), class: "btn btn-sm btn-outline btn-success" do %>
+        <%= lucide_icon("pencil") %> Modifier
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 border border-base-200 shadow-sm overflow-hidden">
+    <div class="bg-success/10 p-8 text-center border-b border-success/20">
+      <div class="text-xs uppercase tracking-widest text-success font-bold mb-2">Revenu enregistré</div>
+      <div class="text-5xl font-black text-success">
+        + <%= number_to_currency(@revenue.amount, unit: "€") %>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <span class="text-xs opacity-50 uppercase font-bold">Source</span>
+          <p class="text-lg font-semibold"><%= @revenue.name %></p>
+        </div>
+        <div>
+          <span class="text-xs opacity-50 uppercase font-bold">Date</span>
+          <p class="text-lg"><%= @revenue.date.strftime("%d %B %Y") %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

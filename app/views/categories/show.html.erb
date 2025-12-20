@@ -1,10 +1,50 @@
-<p style="color: green"><%= notice %></p>
+<div class="max-w-4xl mx-auto space-y-6">
+  <div class="flex justify-between items-center">
+    <%= link_to categories_path, class: "btn btn-ghost btn-sm gap-2" do %>
+      <%= lucide_icon("arrow-left", class: "size-4") %> Retour
+    <% end %>
 
-<%= render @category %>
+    <div class="flex gap-2">
+      <%= link_to edit_category_path(@category), class: "btn btn-sm btn-outline" do %>
+        <%= lucide_icon("pencil", class: "size-4") %> Modifier
+      <% end %>
+      <%= button_to @category, method: :delete, class: "btn btn-sm btn-error btn-outline", data: { confirm: "Supprimer cette catégorie ?" } do %>
+        <%= lucide_icon("trash-2", class: "size-4") %>
+      <% end %>
+    </div>
+  </div>
 
-<div>
-  <%= link_to "Edit this category", edit_category_path(@category) %> |
-  <%= link_to "Back to categories", categories_path %>
+  <div class="card bg-base-100 border border-base-200 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-3xl font-black text-secondary">
+        <%= lucide_icon("folder-open", class: "size-8 text-secondary") %>
+        <%= @category.nom %>
+      </h2>
+      <p class="text-base-content/60">Toutes les dépenses associées à cette catégorie.</p>
+    </div>
+  </div>
 
-  <%= button_to "Destroy this category", @category, method: :delete %>
+  <div class="bg-base-100 rounded-xl border border-base-200 overflow-hidden shadow-sm">
+    <table class="table table-zebra w-full">
+      <thead>
+        <tr class="bg-base-200/50">
+          <th>Désignation</th>
+          <th>Date</th>
+          <th class="text-right">Montant</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @category.expenses.order(date: :desc).each do |expense| %>
+          <tr class="hover">
+            <td class="font-medium"><%= expense.nom %></td>
+            <td class="text-sm opacity-60"><%= expense.date.strftime("%d/%m/%Y") %></td>
+            <td class="text-right font-bold"><%= number_to_currency(expense.montant, unit: "€") %></td>
+          </tr>
+        <% end %>
+        <% if @category.expenses.empty? %>
+          <tr><td colspan="3" class="text-center py-8 opacity-50 italic">Aucune dépense pour le moment</td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>

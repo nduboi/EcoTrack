@@ -1,16 +1,47 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :title, "Mes Catégories" %>
 
-<% content_for :title, "Categories" %>
+<div class="flex flex-col gap-8">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-black">Catégories</h1>
+      <p class="text-base-content/60">Organisez vos transactions par thématique</p>
+    </div>
+    <%= link_to new_category_path, class: "btn btn-primary gap-2" do %>
+      <%= lucide_icon("plus-circle", class: "size-5") %> Nouvelle catégorie
+    <% end %>
+  </div>
 
-<h1>Categories</h1>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="categories">
+    <% @categories.each do |category| %>
+      <div class="card bg-base-100 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
+        <div class="card-body p-6">
+          <div class="flex justify-between items-start">
+            <div class="flex items-center gap-3">
+              <div class="p-3 bg-secondary/10 text-secondary rounded-xl">
+                <%= lucide_icon("folder-tree", class: "size-6") %>
+              </div>
+              <h2 class="card-title text-xl font-bold"><%= category.nom %></h2>
+            </div>
+            
+            <%# Badge de décompte %>
+            <div class="badge badge-ghost"><%= category.expenses.count %> transactions</div>
+          </div>
 
-<div id="categories">
-  <% @categories.each do |category| %>
-    <%= render category %>
-    <p>
-      <%= link_to "Show this category", category %>
-    </p>
-  <% end %>
+          <div class="card-actions justify-end mt-6 pt-4 border-t border-base-100">
+            <%= link_to category, class: "btn btn-ghost btn-sm btn-square" do %>
+              <%= lucide_icon("eye", class: "size-4") %>
+            <% end %>
+            <%= link_to edit_category_path(category), class: "btn btn-ghost btn-sm btn-square" do %>
+              <%= lucide_icon("pencil", class: "size-4") %>
+            <% end %>
+            <%= button_to category, method: :delete, 
+                class: "btn btn-ghost btn-sm btn-square",
+                data: { confirm: "Êtes-vous sûr de vouloir supprimer cette catégorie ?" } do %>
+              <%= lucide_icon("trash-2", class: "size-4") %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>
-
-<%= link_to "New category", new_category_path %>

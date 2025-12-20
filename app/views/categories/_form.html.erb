@@ -1,22 +1,34 @@
-<%= form_with(model: category) do |form| %>
+<%= form_with(model: category, class: "space-y-6") do |f| %>
   <% if category.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:</h2>
-
-      <ul>
-        <% category.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+    <div class="alert alert-error shadow-sm">
+      <%= lucide_icon("octagon-alert") %>
+      <div>
+        <h3 class="font-bold"><%= pluralize(category.errors.count, "erreur") %> empêchent la validation</h3>
+        <ul class="text-xs list-disc list-inside">
+          <% category.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :nom, style: "display: block" %>
-    <%= form.text_field :nom %>
+  <div class="form-control">
+    <%= f.label :nom, "Nom de la catégorie", class: "label font-semibold" %>
+    <div class="relative">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/40">
+        <%= lucide_icon("pen-tool", class: "size-5") %>
+      </div>
+      <%= f.text_field :nom, placeholder: "Ex: Alimentation, Loisirs, Loyer...", 
+          class: "input input-bordered w-full pl-2 focus:input-primary text-lg" %>
+    </div>
+    <label class="label">
+      <span class="label-text-alt text-base-content/40 italic">Choisissez un nom court et explicite.</span>
+    </label>
   </div>
 
-  <div>
-    <%= form.submit %>
+  <div class="flex justify-end gap-3 pt-4">
+    <%= link_to "Annuler", categories_path, class: "btn btn-ghost" %>
+    <%= f.submit "Enregistrer la catégorie", class: "btn btn-primary px-10 text-white" %>
   </div>
 <% end %>
