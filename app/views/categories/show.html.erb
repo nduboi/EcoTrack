@@ -20,7 +20,7 @@
         <%= lucide_icon("folder-open", class: "size-8 text-secondary") %>
         <%= @category.nom %>
       </h2>
-      <p class="text-base-content/60">Toutes les dépenses associées à cette catégorie.</p>
+      <p class="text-base-content/60">Toutes les transactions associées à cette catégorie.</p>
     </div>
   </div>
 
@@ -33,16 +33,33 @@
           <th class="text-right">Montant</th>
         </tr>
       </thead>
-      <tbody>
-        <% @category.expenses.order(date: :desc).each do |expense| %>
+      <tbody id="transactions">
+        <% @transactions.each do |transaction| %>
+          <% is_expense = transaction.is_a?(Expense) %>
+
           <tr class="hover">
-            <td class="font-medium"><%= expense.nom %></td>
-            <td class="text-sm opacity-60"><%= expense.date.strftime("%d/%m/%Y") %></td>
-            <td class="text-right font-bold"><%= number_to_currency(expense.montant, unit: "€") %></td>
+            <td class="font-medium">
+              <div class="flex items-center gap-3">
+                <div class="p-2 rounded-lg <%= is_expense ? 'bg-error/10 text-error' : 'bg-success/10 text-success' %>">
+                  <%= lucide_icon(is_expense ? "arrow-down-right" : "arrow-up-right", class: "size-4") %>
+                </div>
+                <%= transaction.respond_to?(:name) ? transaction.name : transaction.nom %>
+              </div>
+            </td>
+
+            <td class="text-sm opacity-60">
+              <%= transaction.date.strftime("%d/%m/%Y") %>
+            </td>
+
+            <td class="text-right font-bold <%= is_expense ? 'text-error' : 'text-success' %>">
+              <%= is_expense ? "-" : "+" %> 
+              <%= number_to_currency(is_expense ? transaction.montant : transaction.amount, unit: "€") %>
+            </td>
           </tr>
         <% end %>
-        <% if @category.expenses.empty? %>
-          <tr><td colspan="3" class="text-center py-8 opacity-50 italic">Aucune dépense pour le moment</td></tr>
+
+        <% if @transactions.empty? %>
+          <tr><td colspan="3" class="text-center py-8 opacity-50 italic">Aucune transaction pour le moment</td></tr>
         <% end %>
       </tbody>
     </table>

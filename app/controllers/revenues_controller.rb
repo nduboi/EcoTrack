@@ -1,5 +1,6 @@
 class RevenuesController < ApplicationController
   before_action :set_revenue, only: %i[ show edit update destroy ]
+  before_action :set_categories, only: %i[ new edit create update ]
 
   # GET /revenues or /revenues.json
   def index

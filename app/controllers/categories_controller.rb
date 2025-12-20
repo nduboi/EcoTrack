@@ -7,6 +7,9 @@ class CategoriesController < ApplicationController
 
   # GET /categories/1 or /categories/1.json
   def show
+    @category = current_user.categories.find(params[:id])
+
+    @transactions = (@category.expenses + @category.revenues).sort_by(&:date).reverse
   end
 
   # GET /categories/new

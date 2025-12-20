@@ -24,7 +24,7 @@
             </div>
             
             <%# Badge de décompte %>
-            <div class="badge badge-ghost"><%= category.expenses.count %> transactions</div>
+            <div class="badge badge-ghost"><%= category.expenses.count + category.revenues.count %> transactions</div>
           </div>
 
           <div class="card-actions justify-end mt-6 pt-4 border-t border-base-100">
