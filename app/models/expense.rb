@@ -3,4 +3,6 @@ class Expense < ApplicationRecord
   belongs_to :user
   validates :montant, presence: true, numericality: { greater_than: 0 }
   validates :category, :date, presence: true
+  def display_name; nom; end
+    def display_amount; montant; end
 end

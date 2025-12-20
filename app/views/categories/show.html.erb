@@ -43,7 +43,7 @@
                 <div class="p-2 rounded-lg <%= is_expense ? 'bg-error/10 text-error' : 'bg-success/10 text-success' %>">
                   <%= lucide_icon(is_expense ? "arrow-down-right" : "arrow-up-right", class: "size-4") %>
                 </div>
-                <%= transaction.respond_to?(:name) ? transaction.name : transaction.nom %>
+                <%= transaction.display_name %>
               </div>
             </td>
 
@@ -53,7 +53,7 @@
 
             <td class="text-right font-bold <%= is_expense ? 'text-error' : 'text-success' %>">
               <%= is_expense ? "-" : "+" %> 
-              <%= number_to_currency(is_expense ? transaction.montant : transaction.amount, unit: "€") %>
+              <%= number_to_currency(transaction.display_amount, unit: "€") %>
             </td>
           </tr>
         <% end %>

@@ -4,4 +4,6 @@ class Revenue < ApplicationRecord
   validates :name, :amount, :category, :date, presence: true
   validates :amount, numericality: { greater_than: 0 }
   validates :category, presence: true
+  def display_name; name; end
+    def display_amount; amount; end
 end
