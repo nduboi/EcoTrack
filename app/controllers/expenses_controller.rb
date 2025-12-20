@@ -5,15 +5,17 @@ class ExpensesController < ApplicationController
   # GET /expenses or /expenses.json
   def index
     if params[:category_id].present?
-      @expenses = Expense.where(category_id: params[:category_id])
+      @expenses = current_user.expenses.where(category_id: params[:category_id])
     else
-      @expenses = Expense.includes(:category).all
+      @expenses = current_user.expenses.includes(:category).all
     end
+    @categories = current_user.categories.order(:nom)
+    @total_amount = @expenses.sum(:montant)
     respond_to do |format|
       format.html
       format.json { render json: @expenses.as_json(
-        include: { category: { only: :nom } }, 
-        except: :category_id 
+        include: { category: { only: :nom } },
+        except: :category_id
       )}
     end
   end
@@ -33,7 +35,7 @@ class ExpensesController < ApplicationController
 
   # POST /expenses or /expenses.json
   def create
-    @expense = Expense.new(expense_params)
+    @expense = current_user.expenses.build(expense_params)
 
     respond_to do |format|
       if @expense.save
