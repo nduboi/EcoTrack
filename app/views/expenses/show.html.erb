@@ -1,12 +1,85 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :title, "Détail : #{@expense.nom}" %>
 
-<%= 
-render @expense 
-%>
+<div class="max-w-2xl mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <%= link_to expenses_path, class: "btn btn-ghost btn-sm gap-2" do %>
+      <%= lucide_icon("arrow-left", class: "size-4") %> Retour
+    <% end %>
 
-<div>
-  <%= link_to "Edit this expense", edit_expense_path(@expense) %> |
-  <%= link_to "Back to expenses", expenses_path %>
+    <div class="flex gap-2">
+      <%= link_to edit_expense_path(@expense), class: "btn btn-outline btn-sm gap-2" do %>
+        <%= lucide_icon("pencil", class: "size-4") %> Modifier
+      <% end %>
+      
+      <%= button_to @expense, method: :delete, 
+          class: "btn btn-error btn-sm btn-outline gap-2",
+          data: { confirm: "Êtes-vous sûr de vouloir supprimer cette dépense ?" } do %>
+        <%= lucide_icon("trash-2", class: "size-4") %> Supprimer
+      <% end %>
+    </div>
+  </div>
 
-  <%= button_to "Destroy this expense", @expense, method: :delete %>
+  <div class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden">
+    <%# En-tête de la fiche avec le montant mis en avant %>
+    <div class="bg-base-200/50 p-8 text-center border-b border-base-200">
+      <div class="text-sm uppercase tracking-widest opacity-60 mb-2">Montant de la dépense</div>
+      <div class="text-5xl font-black text-primary">
+        <%= number_to_currency(@expense.montant, unit: "€", separator: ",", delimiter: " ") %>
+      </div>
+    </div>
+
+    <div class="card-body gap-6">
+      <%# Détails sous forme de grille %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex items-start gap-4">
+          <div class="p-2 bg-base-200 rounded-lg text-base-content/70">
+            <%= lucide_icon("tag") %>
+          </div>
+          <div>
+            <div class="text-xs font-bold uppercase opacity-50">Désignation</div>
+            <div class="text-lg font-medium"><%= @expense.nom %></div>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4">
+          <div class="p-2 bg-base-200 rounded-lg text-base-content/70">
+            <%= lucide_icon("calendar") %>
+          </div>
+          <div>
+            <div class="text-xs font-bold uppercase opacity-50">Date</div>
+            <div class="text-lg font-medium"><%= @expense.date.strftime("%d %B %Y") %></div>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4">
+          <div class="p-2 bg-base-200 rounded-lg text-base-content/70">
+            <%= lucide_icon("layers") %>
+          </div>
+          <div>
+            <div class="text-xs font-bold uppercase opacity-50">Catégorie</div>
+            <div>
+              <span class="badge badge-primary badge-outline font-medium">
+                <%= @expense.category&.nom || "Non classé" %>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <%# Si tu as ajouté un champ note comme discuté plus tôt %>
+        <% if @expense.respond_to?(:note) && @expense.note.present? %>
+          <div class="col-span-full flex items-start gap-4 border-t border-base-200 pt-6">
+            <div class="p-2 bg-base-200 rounded-lg text-base-content/70">
+              <%= lucide_icon("sticky-note") %>
+            </div>
+            <div class="grow">
+              <div class="text-xs font-bold uppercase opacity-50">Note / Commentaire</div>
+              <div class="text-sm bg-base-200/30 p-4 rounded-lg mt-2 italic">
+                "<%= @expense.note %>"
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>

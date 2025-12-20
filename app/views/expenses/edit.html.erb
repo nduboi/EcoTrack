@@ -1,12 +1,28 @@
-<% content_for :title, "Editing expense" %>
+<% content_for :title, "Modifier la dépense" %>
 
-<h1>Editing expense</h1>
+<div class="max-w-2xl mx-auto">
+  <%# Fil d'ariane %>
+  <div class="text-sm breadcrumbs mb-6 text-base-content/60">
+    <ul>
+      <li><%= link_to "Dépenses", expenses_path, class: "hover:text-primary transition-colors" %></li>
+      <li><%= link_to @expense.nom, @expense, class: "hover:text-primary transition-colors" %></li>
+      <li class="font-bold">Modification</li>
+    </ul>
+  </div>
 
-<%= render "form", expense: @expense %>
+  <div class="card bg-base-100 shadow-xl border border-base-200">
+    <div class="card-body">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="p-3 bg-warning/10 text-warning rounded-lg">
+          <%= lucide_icon("pencil-line", class: "size-6") %>
+        </div>
+        <div>
+          <h2 class="card-title text-2xl font-bold">Modifier la dépense</h2>
+          <p class="text-sm text-base-content/60">Mettez à jour les informations de la transaction</p>
+        </div>
+      </div>
 
-<br>
-
-<div>
-  <%= link_to "Show this expense", @expense %> |
-  <%= link_to "Back to expenses", expenses_path %>
+      <%= render "form", expense: @expense %>
+    </div>
+  </div>
 </div>

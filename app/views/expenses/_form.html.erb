@@ -1,36 +1,73 @@
-<%= form_with(model: expense) do |form| %>
+<%= form_with(model: expense, class: "space-y-5") do |f| %>
   <% if expense.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(expense.errors.count, "error") %> prohibited this expense from being saved:</h2>
-
-      <ul>
-        <% expense.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+    <div class="alert alert-error shadow-sm mb-6">
+      <%= lucide_icon("octagon-alert") %>
+      <div class="flex flex-col">
+        <span class="font-bold"><%= pluralize(expense.errors.count, "erreur") %> empêchent l'enregistrement :</span>
+        <ul class="text-xs list-disc list-inside">
+          <% expense.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :nom, style: "display: block" %>
-    <%= form.text_field :nom %>
+  <%# Champ Désignation %>
+  <div class="form-control">
+    <%= f.label :nom, "Désignation", class: "label font-semibold" %>
+    <div class="relative">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/40">
+        <%= lucide_icon("tag", class: "size-5") %>
+      </div>
+      <%= f.text_field :nom, placeholder: "Ex: Courses", 
+          class: "input input-bordered w-full pl-2 focus:input-primary" %>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :montant, style: "display: block" %>
-    <%= form.text_field :montant %>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <%# Champ Montant %>
+    <div class="form-control">
+      <%= f.label :montant, "Montant", class: "label font-semibold" %>
+      <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/40 font-bold">
+          €
+        </div>
+        <%= f.number_field :montant, step: :any, placeholder: "0.00",
+            class: "input input-bordered w-full pl-2 focus:input-primary" %>
+      </div>
+    </div>
+
+    <%# Champ Date %>
+    <div class="form-control">
+      <%= f.label :date, "Date", class: "label font-semibold" %>
+      <%= f.date_field :date, value: Date.today,
+          class: "input input-bordered w-full focus:input-primary" %>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :date, style: "display: block" %>
-    <%= form.date_field :date %>
+  <%# Champ Catégorie %>
+  <div class="form-control">
+    <%= f.label :category_id, "Catégorie", class: "label font-semibold" %>
+    <div class="flex gap-2">
+      <div class="relative grow">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/40">
+          <%= lucide_icon("layers", class: "size-5") %>
+        </div>
+        <%= f.collection_select :category_id, current_user.categories.all, :id, :nom, 
+            { prompt: "Sélectionner une catégorie" }, 
+            { class: "select select-bordered w-full pl-2 focus:select-primary" } %>
+      </div>
+      
+      <%# Petit raccourci pour créer une catégorie si elle manque %>
+      <%= link_to new_category_path, class: "btn btn-square btn-outline", title: "Nouvelle catégorie" do %>
+        <%= lucide_icon("plus") %>
+      <% end %>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :category_id, style: "display: block" %>
-    <%= form.select :category_id, @categories.collect { |c| [c.nom, c.id] }, {}, { style: "display: block" } %>
-  </div>
-  <div>
-    <%= form.submit %>
+  <div class="card-actions justify-end mt-8 pt-4 border-t border-base-200">
+    <%= link_to "Annuler", expenses_path, class: "btn btn-ghost" %>
+    <%= f.submit "Enregistrer la dépense", class: "btn btn-primary px-8 text-white" %>
   </div>
 <% end %>

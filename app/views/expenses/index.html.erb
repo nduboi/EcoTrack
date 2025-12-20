@@ -1,27 +1,84 @@
-<%= form_with url: expenses_path, method: :get do |form| %>
-  <div>
-    <%= form.label :category_id, "Filtrer par catégorie :" %>
-    <%= form.collection_select :category_id, Category.all, :id, :nom, include_blank: "Toutes les catégories" %>
-    <%= form.submit "Filtrer" %>
-  </div>
-<% end %>
-
-<p style="color: green"><%= notice %></p>
-
 <% content_for :title, "Dépenses" %>
 
-<h1>Dépenses</h1>
+<div class="flex flex-col gap-8">
+  
+  <%# 1. En-tête avec Stat et Filtre %>
+  <div class="flex flex-col md:flex-row justify-between items-end gap-4">
+    <div class="stats shadow bg-primary text-primary-content w-full md:w-64">
+      <div class="stat">
+        <div class="stat-title text-primary-content/60">Total Dépensé</div>
+        <div class="stat-value text-3xl"><%= number_to_currency(@total_amount, unit: "€", separator: ",", delimiter: " ") %></div>
+        <div class="stat-desc text-primary-content/60 font-medium"><%= @expenses.count %> transactions</div>
+      </div>
+    </div>
 
-<div id="expenses">
-  <h1>Liste des dépenses</h1>
-  <% @expenses.each do |expense| %>
-    <%= render expense %>
-    <p>
-      <%= link_to "Show this expense", expense %>
-    </p>
-  <% end %>
+    <%# Filtre par catégorie %>
+    <%= form_with url: expenses_path, method: :get, class: "flex items-end gap-2" do |form| %>
+      <div class="form-control">
+        <label class="label"><span class="label-text">Filtrer par catégorie</span></label>
+        <% if current_user.categories.any? %>
+          <%= form.collection_select :category_id, @categories, :id, :nom, 
+              { include_blank: "Toutes les catégories", selected: params[:category_id] }, 
+              { class: "select select-bordered select-sm", onchange: "this.form.requestSubmit()" } %>
+          <% end %>
+        </div>
+      <%= link_to "Effacer", expenses_path, class: "btn btn-ghost btn-sm" if params[:category_id].present? %>
+    <% end %>
+  </div>
+
+  <%# 2. Bouton d'action %>
+  <div class="flex justify-between items-center">
+    <h2 class="text-xl font-bold flex items-center gap-2">
+      <%= lucide_icon("list") %> Liste des dépenses
+    </h2>
+    <%= link_to new_expense_path, class: "btn btn-primary btn-sm gap-2" do %>
+      <%= lucide_icon("plus", class: "size-4") %> Nouvelle dépense
+    <% end %>
+  </div>
+
+  <%# 3. Tableau des dépenses %>
+  <div class="overflow-x-auto bg-base-100 rounded-xl border border-base-200 shadow-sm">
+    <table class="table table-zebra">
+      <thead>
+        <tr class="bg-base-200/50">
+          <th>Date</th>
+          <th>Désignation</th>
+          <th>Catégorie</th>
+          <th class="text-right">Montant</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="expenses">
+        <% if @expenses.any? %>
+          <% @expenses.each do |expense| %>
+            <tr class="hover">
+              <td class="text-xs opacity-70"><%= expense.date.strftime("%d/%m/%Y") %></td>
+              <td class="font-medium"><%= expense.nom %></td>
+              <td>
+                <span class="badge badge-ghost badge-sm"><%= expense.category&.nom || "Sans catégorie" %></span>
+              </td>
+              <td class="text-right font-bold text-error">- <%= number_to_currency(expense.montant, unit: "€") %></td>
+              <td class="flex justify-center gap-2">
+                <%= link_to expense, class: "btn btn-ghost btn-xs btn-square", title: "Voir" do %>
+                  <%= lucide_icon("eye", class: "size-4") %>
+                <% end %>
+                <%= link_to edit_expense_path(expense), class: "btn btn-ghost btn-xs btn-square", title: "Modifier" do %>
+                  <%= lucide_icon("pencil", class: "size-4") %>
+                <% end %>
+                <%= button_to expense, method: :delete, data: { confirm: "Êtes-vous sûr de vouloir supprimer cette dépense ?" }, class: "btn btn-ghost btn-xs btn-square", title: "Supprimer" do %>
+                  <%= lucide_icon("trash-2", class: "size-4") %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="5" class="text-center py-10 opacity-50 italic">
+              Aucune dépense trouvée.
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>
-<%= link_to "Nouvelle dépense", new_expense_path %>
-
-<h1>Somme toutes les dépenses: <%= @expenses.sum(:montant) %> </h1>
-
