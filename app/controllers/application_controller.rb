@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   private
 
   def set_active_account_context
+    return unless current_user
     if session[:active_account_id].present?
       @active_account = current_user.accounts.find_by(id: session[:active_account_id])
       session[:active_account_id] = nil unless @active_account

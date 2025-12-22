@@ -4,7 +4,7 @@
   <%# Message de bienvenue %>
   <div>
     <h1 class="text-3xl font-black">Bonjour, <%= current_user.name.presence || current_user.email %> ! 👋</h1>
-    <p class="text-base-content/60">Voici un aperçu de vos finances</p>
+    <p class="text-base-content/60">Voici un aperçu de vos finances (<%= @context_title %>)</p>
   </div>
 
   <%# Section des Stats %>
@@ -16,8 +16,8 @@
         <%= lucide_icon("trending-up", class: "size-8") %>
       </div>
       <div class="stat-title font-medium uppercase text-xs tracking-wider text-base-content/60">Revenus cumulés</div>
-      <div class="stat-value text-success"><%= number_to_currency(@totalreceipe, unit: "€") %></div>
-      <div class="stat-desc">Depuis le début</div>
+      <div class="stat-value text-success"><%= number_to_currency(@total_revenues, unit: "€") %></div>
+      <div class="stat-desc">Période en cours</div>
     </div>
     
     <%# Dépenses %>
@@ -26,20 +26,23 @@
         <%= lucide_icon("trending-down", class: "size-8") %>
       </div>
       <div class="stat-title font-medium uppercase text-xs tracking-wider text-base-content/60">Dépenses cumulées</div>
-      <div class="stat-value text-error"><%= number_to_currency(@totalexpenses, unit: "€") %></div>
-      <div class="stat-desc font-medium"><%= current_user.expenses.count %> transactions</div>
+      <div class="stat-value text-error"><%= number_to_currency(@total_expenses, unit: "€") %></div>
+      <div class="stat-desc font-medium"><%= @recent_transactions.count rescue 0 %> transactions récentes</div>
     </div>
     
     <%# Solde Net (Account) %>
     <div class="stat border-l border-base-200">
-      <div class="stat-figure <%= @totalaccount >= 0 ? 'text-primary' : 'text-error' %>">
+      <%# Variable locale sécurisée pour éviter le crash %>
+      <% current_balance = @total_balance || 0 %>
+      
+      <div class="stat-figure <%= current_balance >= 0 ? 'text-primary' : 'text-error' %>">
         <%= lucide_icon("wallet", class: "size-8") %>
       </div>
       <div class="stat-title font-medium uppercase text-xs tracking-wider text-base-content/60">Solde Actuel</div>
-      <div class="stat-value <%= @totalaccount >= 0 ? 'text-primary' : 'text-error' %>">
-        <%= number_to_currency(@totalaccount, unit: "€") %>
+      <div class="stat-value <%= current_balance >= 0 ? 'text-primary' : 'text-error' %>">
+        <%= number_to_currency(current_balance, unit: "€") %>
       </div>
-      <div class="stat-desc font-semibold text-base-content/40">Wallet</div>
+      <div class="stat-desc font-semibold text-base-content/40">Global</div>
     </div>
 
   </div>
@@ -54,6 +57,7 @@
       <%= lucide_icon("plus-circle") %> Enregistrer un revenu
     <% end %>
   </div>
+
   <h2 class="text-xl font-bold mt-8 mb-4">Mes Comptes</h2>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <% @accounts.each do |account| %>
@@ -69,7 +73,7 @@
             <% end %>
           </div>
           <p class="text-2xl font-black mt-2">
-            <%= number_to_currency(account.balance, unit: "€") %>
+            <%= number_to_currency(account.solde_actuel, unit: "€") %>
           </p>
         </div>
       </div>

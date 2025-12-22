@@ -1,4 +1,21 @@
 services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .env:/app/.env
+    env_file:
+      - .env
+    environment:
+      RAILS_ENV: production
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      POSTGRES_HOST: db
+      POSTGRES_DB: prod
+    depends_on:
+      db:
+        condition: service_healthy
+
   db:
     image: postgres:17-alpine
     environment:
@@ -12,6 +29,11 @@ services:
       - "5432:5432"
     networks:
       - default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   pgadmin:
     image: dpage/pgadmin4

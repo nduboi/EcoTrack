@@ -5,6 +5,21 @@
         class: "input input-bordered w-full focus:input-success" %>
   </div>
 
+  <%# --- NOUVEAU : Champ Compte --- %>
+  <div class="form-control">
+    <%= f.label :account_id, "Compte crédité", class: "label font-bold" %>
+    
+    <% if revenue.account_id %>
+      <div class="input input-bordered flex items-center bg-base-200 text-base-content/60 cursor-not-allowed">
+        <%= lucide_icon("lock", class: "size-4 mr-2 opacity-50") %>
+        <span class="font-medium"><%= revenue.account&.name %></span>
+      </div>
+      <%= f.hidden_field :account_id %>
+    <% else %>
+      <%= f.collection_select :account_id, current_user.accounts, :id, :name, { prompt: "Sélectionner un compte" }, { class: "select select-bordered focus:select-success" } %>
+    <% end %>
+  </div>
+
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div class="form-control">
       <%= f.label :amount, "Montant", class: "label font-semibold" %>
