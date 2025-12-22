@@ -4,13 +4,30 @@ class ExpensesController < ApplicationController
 
   # GET /expenses or /expenses.json
   def index
-    if params[:category_id].present?
-      @expenses = current_user.expenses.where(category_id: params[:category_id])
+    # 1. On définit la base de recherche (Scope)
+    # Si un compte est actif (Mode Focus), on ne prend que ses dépenses
+    if @active_account
+      @context_title = @active_account.name
+      scope = current_user.expenses.where(account_id: @active_account.id)
     else
-      @expenses = current_user.expenses.includes(:category).all
+      # Sinon on prend tout
+      @context_title = "Toutes les dépenses"
+      scope = current_user.expenses
     end
+
+    # 2. On applique le filtre par catégorie si demandé (Ton code existant conservé)
+    if params[:category_id].present?
+      scope = scope.where(category_id: params[:category_id])
+    end
+
+    # 3. Récupération finale avec tri par date
+    @expenses = scope.includes(:category).order(date: :desc)
+
+    # Pour le menu déroulant des filtres
     @categories = current_user.categories.order(:nom)
+
     @total_amount = @expenses.sum(:montant)
+
     respond_to do |format|
       format.html
       format.json { render json: @expenses.as_json(
@@ -27,6 +44,7 @@ class ExpensesController < ApplicationController
   # GET /expenses/new
   def new
     @expense = Expense.new
+    # Pré-remplissage intelligent du compte
     @expense.account_id = params[:account_id] || @active_account&.id
   end
 
@@ -40,7 +58,8 @@ class ExpensesController < ApplicationController
 
     respond_to do |format|
       if @expense.save
-        format.html { redirect_to @expense, notice: "Expense was successfully created." }
+        # MODIFICATION : Retour vers le compte ou la liste, pas vers le détail
+        format.html { redirect_to @expense.account || expenses_path, notice: "Dépense enregistrée avec succès." }
         format.json { render :show, status: :created, location: @expense }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -53,7 +72,8 @@ class ExpensesController < ApplicationController
   def update
     respond_to do |format|
       if @expense.update(expense_params)
-        format.html { redirect_to @expense, notice: "Expense was successfully updated.", status: :see_other }
+        # MODIFICATION : Retour vers le compte ou la liste
+        format.html { redirect_to @expense.account || expenses_path, notice: "Dépense mise à jour." }
         format.json { render :show, status: :ok, location: @expense }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -67,19 +87,21 @@ class ExpensesController < ApplicationController
     @expense.destroy!
 
     respond_to do |format|
-      format.html { redirect_to expenses_path, notice: "Expense was successfully destroyed.", status: :see_other }
+      format.html { redirect_to expenses_path, notice: "Dépense supprimée.", status: :see_other }
       format.json { head :no_content }
     end
-  end
-
-  def set_categories
-    @categories = Category.all
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_expense
-      @expense = Expense.find(params.expect(:id))
+      @expense = Expense.find(params[:id])
+      # Note: j'ai remis params[:id] standard, si tu utilises Rails 8 'params.expect(:id)' fonctionne aussi
+    end
+
+    def set_categories
+      # CORRECTION DE SÉCURITÉ : Uniquement les catégories de l'utilisateur
+      @categories = current_user.categories.order(:nom)
     end
 
     # Only allow a list of trusted parameters through.
