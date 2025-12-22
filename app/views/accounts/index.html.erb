@@ -1,0 +1,54 @@
+<% content_for :title, "Mes Comptes" %>
+
+<div class="flex flex-col gap-8">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-black italic text-primary">EcoTrack<span class="text-base-content font-light">Bank</span></h1>
+      <p class="text-base-content/60 text-sm">Gérez vos différents portefeuilles et comptes</p>
+    </div>
+    <%= link_to new_account_path, class: "btn btn-primary shadow-lg" do %>
+      <%= lucide_icon("plus") %> Nouveau Compte
+    <% end %>
+  </div>
+
+  <%# Grille des comptes %>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="accounts">
+    <% @accounts.each do |account| %>
+      <% is_cash = account.account_type == "Espèces" %>
+      <div class="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-all group">
+        <div class="card-body p-6">
+          <div class="flex justify-between items-start">
+            <div class="flex items-center gap-3">
+              <div class="p-3 rounded-2xl <%= is_cash ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600' %>">
+                <%= lucide_icon(is_cash ? "wallet" : "landmark", class: "size-6") %>
+              </div>
+              <div>
+                <h2 class="card-title text-lg leading-tight"><%= account.name %></h2>
+                <span class="badge badge-ghost badge-sm opacity-60"><%= account.account_type %></span>
+              </div>
+            </div>
+            
+            <div class="dropdown dropdown-end opacity-0 group-hover:opacity-100 transition-opacity">
+              <label tabindex="0" class="btn btn-ghost btn-xs btn-square"><%= lucide_icon("ellipsis-vertical") %></label>
+              <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40 border border-base-200">
+                <li><%= link_to "Voir détails", account %></li>
+                <li><%= link_to "Modifier", edit_account_path(account) %></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <p class="text-xs font-semibold uppercase tracking-wider text-base-content/40 mb-1">Solde Actuel</p>
+            <p class="text-3xl font-black <%= account.balance >= 0 ? 'text-success' : 'text-error' %>">
+              <%= number_to_currency(account.balance, unit: "€") %>
+            </p>
+          </div>
+
+          <div class="card-actions justify-end mt-4">
+             <%= link_to "Historique", account, class: "link link-primary text-sm font-semibold no-underline hover:underline" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

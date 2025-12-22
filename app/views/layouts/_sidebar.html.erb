@@ -18,12 +18,86 @@
         </div>
       </li>
 
+      <li class="w-full px-2 mt-2">
+        <div class="dropdown dropdown-bottom w-full p-0">
+          
+          <%# --- BOUTON DÉCLENCHEUR --- %>
+          <div tabindex="0" role="button" class="flex items-center gap-3 p-2 rounded-lg bg-base-100 hover:bg-base-300 border border-base-300/50 transition-all w-full is-drawer-close:justify-center is-drawer-close:p-2">
+            
+            <div class="shrink-0 text-primary">
+              <%= lucide_icon("arrow-right-left", class: "size-5") %>
+            </div>
+
+            <%# CORRECTION ICI : Utilisation de @active_account au lieu de @account %>
+            <div class="text-left flex-1 truncate is-drawer-close:hidden overflow-hidden">
+              <div class="text-[10px] uppercase font-bold opacity-50 tracking-wider">Compte actif</div>
+              <div class="font-bold text-sm truncate">
+                <%= @active_account&.name || "Vue Globale" %>
+              </div>
+            </div>
+
+            <%= lucide_icon("chevron-down", class: "size-4 opacity-50 is-drawer-close:hidden shrink-0") %>
+          </div>
+
+          <%# --- MENU DÉROULANT --- %>
+          <ul tabindex="0" class="dropdown-content z-[50] menu p-2 shadow-lg bg-base-100 rounded-box w-60 -ml-2 mt-2 border border-base-200">
+            
+            <%# Option 1: Vue Globale %>
+            <li>
+              <%# CORRECTION ICI : Ajout de form: { class: "contents" } pour ne pas casser le style %>
+              <%= button_to switch_account_path, 
+                  method: :post, 
+                  form: { class: "contents" },
+                  class: "flex justify-between #{@active_account.nil? ? 'active' : ''}" do %>
+                <span class="font-medium">Vue Globale</span>
+                <%= lucide_icon("layout-dashboard", class: "size-4 opacity-50") %>
+              <% end %>
+            </li>
+
+            <div class="divider my-1 text-xs opacity-50">Mes Comptes</div>
+
+            <%# Option 2: Liste des comptes %>
+            <% current_user.accounts.each do |account| %>
+              <%# Sécurité : on ignore les comptes non sauvegardés %>
+              <% next unless account.persisted? %>
+              
+              <li>
+                <%= button_to switch_account_path(account_id: account.id), 
+                    method: :post, 
+                    form: { class: "contents" },
+                    class: "flex justify-between items-center group #{@active_account&.id == account.id ? 'active' : ''}" do %>
+                  
+                  <div class="flex items-center gap-2">
+                    <%= lucide_icon(account.account_type == "Espèces" ? "wallet" : "landmark", class: "size-4 opacity-70") %>
+                    <span class="truncate max-w-[100px]"><%= account.name %></span>
+                  </div>
+                  
+                  <span class="text-xs font-mono opacity-60">
+                    <%= number_to_currency(account.balance, unit: "€", precision: 0) %>
+                  </span>
+                <% end %>
+              </li>
+            <% end %>
+
+            <div class="divider my-1"></div>
+            
+            <%# Option 3: Nouveau compte %>
+            <li>
+              <%= link_to new_account_path, class: "text-primary font-semibold hover:bg-primary/10" do %>
+                <%= lucide_icon("plus-circle", class: "size-4") %>
+                Nouveau compte
+              <% end %>
+            </li>
+
+          </ul>
+        </div>
+      </li>
       <div class="divider my-0 h-1 w-full"></div>
       <%= render "layouts/sidebar_item", title: "Tableau de bord", icon: "home", path: root_path %>
       <%= render "layouts/sidebar_item", title: "Catégories", icon: "chart-column-stacked", path: "/categories" %>
       <%= render "layouts/sidebar_item", title: "Dépenses", icon: "banknote-arrow-down", path: "/expenses" %>
       <%= render "layouts/sidebar_item", title: "Revenus", icon: "banknote-arrow-up", path: "/revenues" %>
-      <%= render "layouts/sidebar_item", title: "Comptes", icon: "landmark", path: "/bank" %>
+      <%= render "layouts/sidebar_item", title: "Comptes", icon: "landmark", path: "/accounts" %>
       <%= render "layouts/sidebar_item", title: "Portefeuille", icon: "wallet", path: "/wallet" %>
       <div class="divider my-0 h-1 w-full mt-auto"></div>
       <%= render "layouts/sidebar_item", title: "Settings", icon: "settings", path: "/settings" %>

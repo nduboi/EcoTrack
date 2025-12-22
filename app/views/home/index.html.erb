@@ -54,4 +54,25 @@
       <%= lucide_icon("plus-circle") %> Enregistrer un revenu
     <% end %>
   </div>
+  <h2 class="text-xl font-bold mt-8 mb-4">Mes Comptes</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <% @accounts.each do |account| %>
+      <div class="card border border-base-200 shadow-sm <%= 'opacity-50 grayscale' if account.hidden? %>">
+        <div class="card-body p-4">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <%= lucide_icon(account.account_type == "Espèces" ? "wallet" : "landmark", class: "size-5") %>
+              <h3 class="font-bold"><%= account.name %></h3>
+            </div>
+            <% if account.hidden? %>
+              <div class="badge badge-ghost badge-xs">Masqué</div>
+            <% end %>
+          </div>
+          <p class="text-2xl font-black mt-2">
+            <%= number_to_currency(account.balance, unit: "€") %>
+          </p>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>

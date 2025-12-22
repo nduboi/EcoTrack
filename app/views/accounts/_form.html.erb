@@ -1,0 +1,54 @@
+<%= form_with(model: account, class: "space-y-6") do |f| %>
+  <div class="form-control">
+    <%= f.label :name, "Nom du compte", class: "label font-bold" %>
+    <%= f.text_field :name, placeholder: "Ex: Compte Courant, Portefeuille, Livret A...", 
+        class: "input input-bordered focus:input-primary text-lg" %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="form-control">
+      <%= f.label :account_type, "Type de compte", class: "label font-bold" %>
+      <%= f.select :account_type, ["Compte de dépôt", "Livret", "Espèces", "Investissement"], 
+          { prompt: "Choisir un type" }, 
+          { class: "select select-bordered focus:select-primary" } %>
+    </div>
+
+    <div class="form-control">
+      <%= f.label :balance, "Solde Initial", class: "label font-bold" %>
+      <div class="relative">
+        <span class="absolute inset-y-0 left-3 flex items-center text-base-content/40">€</span>
+        <%= f.number_field :balance, step: :any, class: "input input-bordered w-full pl-8 focus:input-primary" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider text-xs opacity-40 uppercase tracking-widest">Infos bancaires (Optionnel)</div>
+
+  <div class="form-control">
+    <%= f.label :bank_name, "Nom de la banque", class: "label font-semibold opacity-70" %>
+    <%= f.text_field :bank_name, placeholder: "Ex: BNP Paribas, BoursoBank...", class: "input input-bordered input-sm" %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+     <div class="form-control">
+      <%= f.label :iban, "IBAN", class: "label font-semibold opacity-70" %>
+      <%= f.text_field :iban, placeholder: "FR76...", class: "input input-bordered input-sm font-mono" %>
+    </div>
+     <div class="form-control">
+      <%= f.label :bic, "BIC / SWIFT", class: "label font-semibold opacity-70" %>
+      <%= f.text_field :bic, placeholder: "BNPP...", class: "input input-bordered input-sm font-mono" %>
+    </div>
+  </div>
+
+  <div class="form-control">
+    <label class="label cursor-pointer justify-start gap-4">
+      <%= f.check_box :hidden, class: "checkbox checkbox-primary" %>
+      <span class="label-text">Masquer ce compte du Total Global</span>
+    </label>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-6">
+    <%= link_to "Annuler", accounts_path, class: "btn btn-ghost" %>
+    <%= f.submit "Créer le compte", class: "btn btn-primary px-10 text-white" %>
+  </div>
+<% end %>

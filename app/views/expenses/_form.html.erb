@@ -13,6 +13,8 @@
     </div>
   <% end %>
 
+  
+
   <%# Champ Désignation %>
   <div class="form-control">
     <%= f.label :nom, "Désignation", class: "label font-semibold" %>
@@ -23,6 +25,20 @@
       <%= f.text_field :nom, placeholder: "Ex: Courses", 
           class: "input input-bordered w-full pl-2 focus:input-primary" %>
     </div>
+  </div>
+  <div class="form-control">
+    <%= f.label :account_id, "Compte débité", class: "label font-bold" %>
+    
+    <%# Si un compte est déjà pré-sélectionné via l'URL %>
+    <% if expense.account_id %>
+      <div class="input input-bordered flex items-center bg-base-200 text-base-content/60">
+        <%= lucide_icon("lock", class: "size-4 mr-2") %>
+        <%= expense.account.name %>
+      </div>
+      <%= f.hidden_field :account_id %>
+    <% else %>
+      <%= f.collection_select :account_id, current_user.accounts, :id, :name, {}, { class: "select select-bordered" } %>
+    <% end %>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

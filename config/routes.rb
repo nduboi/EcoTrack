@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
+  post "/switch_account", to: "accounts#switch_context", as: :switch_account
+  resources :accounts
   resources :revenues
-  devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
+  devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
   root "home#index"
   resources :expenses
   resources :categories

@@ -27,6 +27,7 @@ class ExpensesController < ApplicationController
   # GET /expenses/new
   def new
     @expense = Expense.new
+    @expense.account_id = params[:account_id] || @active_account&.id
   end
 
   # GET /expenses/1/edit
@@ -83,6 +84,6 @@ class ExpensesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def expense_params
-      params.expect(expense: [ :nom, :montant, :date, :category_id ])
+      params.require(:expense).permit(:nom, :montant, :date, :category_id, :account_id)
     end
 end

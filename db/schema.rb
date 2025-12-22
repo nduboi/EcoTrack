@@ -10,9 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_20_002450) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_22_194909) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "accounts", force: :cascade do |t|
+    t.string "account_type"
+    t.decimal "balance"
+    t.string "bank_name"
+    t.string "bic"
+    t.datetime "created_at", null: false
+    t.boolean "hidden", default: false
+    t.string "iban"
+    t.decimal "initial_balance"
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_accounts_on_user_id"
+  end
 
   create_table "categories", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -23,6 +38,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_20_002450) do
   end
 
   create_table "expenses", force: :cascade do |t|
+    t.bigint "account_id", null: false
     t.bigint "category_id", null: false
     t.datetime "created_at", null: false
     t.date "date"
@@ -30,11 +46,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_20_002450) do
     t.string "nom"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["account_id"], name: "index_expenses_on_account_id"
     t.index ["category_id"], name: "index_expenses_on_category_id"
     t.index ["user_id"], name: "index_expenses_on_user_id"
   end
 
   create_table "revenues", force: :cascade do |t|
+    t.bigint "account_id", null: false
     t.decimal "amount"
     t.bigint "category_id", null: false
     t.datetime "created_at", null: false
@@ -43,6 +61,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_20_002450) do
     t.string "name"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["account_id"], name: "index_revenues_on_account_id"
     t.index ["category_id"], name: "index_revenues_on_category_id"
     t.index ["user_id"], name: "index_revenues_on_user_id"
   end
@@ -63,9 +82,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_20_002450) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "accounts", "users"
   add_foreign_key "categories", "users"
+  add_foreign_key "expenses", "accounts"
   add_foreign_key "expenses", "categories"
   add_foreign_key "expenses", "users"
+  add_foreign_key "revenues", "accounts"
   add_foreign_key "revenues", "categories"
   add_foreign_key "revenues", "users"
 end
